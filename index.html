@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lottery Machine</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="page-header">
+    <h1>LOTTERY MACHINE</h1>
+    <p>Mix the balls. Catch winners. No repeat winners.</p>
+  </header>
+
+  <main class="layout">
+    <section class="machine-panel">
+      <div class="stats">
+        <div>Loaded <strong id="loadedCount">0</strong></div>
+        <div>Remaining <strong id="remainingCount">0</strong></div>
+        <div>Winners <strong id="winnerCount">0</strong></div>
+      </div>
+
+      <div class="machine-wrap">
+        <div id="machineCategory" class="machine-category" aria-live="polite">All Members</div>
+        <canvas id="machineCanvas" role="button" tabindex="0" aria-label="Lottery machine. Click or press Enter to pick a winner." aria-disabled="true"></canvas>
+      </div>
+
+      <div class="controls">
+        <button id="drawBtn" class="primary" disabled>🎱 Pick a Winner</button>
+        <button id="bulkDrawBtn" class="primary" disabled>🎱 Pick 10 Winners</button>
+        <button id="nextBtn" class="secondary" hidden>Next Draw</button>
+        <button id="exportBtn" class="secondary" disabled>Export Winners CSV</button>
+        <button id="resetBtn" class="danger" disabled>Reset</button>
+      </div>
+      <p class="hint">Bulk draw requires at least 10 eligible members in the selected category.</p>
+    </section>
+
+    <aside class="sidebar">
+      <section class="card">
+        <h2>Import member list</h2>
+        <label for="categoryColumn">Member category column</label>
+        <select id="categoryColumn" disabled>
+          <option>Import a CSV first</option>
+        </select>
+        <label class="file-button" for="csvFile">Choose CSV file</label>
+        <input id="csvFile" type="file" accept=".csv,text/csv">
+        <label class="check-row"><input id="hasHeader" type="checkbox" checked> First row contains headings</label>
+
+        <label for="idColumn">Member ID column</label>
+        <select id="idColumn" disabled><option>Import a CSV first</option></select>
+
+        <label for="nameColumn">Member name column (optional)</label>
+        <select id="nameColumn" disabled><option>Import a CSV first</option></select>
+
+        <p class="hint">In Excel, choose Save As → CSV UTF-8. Keep IDs as text if they contain leading zeros.</p>
+      </section>
+
+      <section class="card">
+        <h2>Machine settings</h2>
+        <label for="drawCategory">Draw Category</label>
+        <select id="drawCategory">
+          <option value="">All Members</option>
+        </select>
+        <label for="ballCount">Balls shown inside the machine</label>
+        <select id="ballCount">
+          <option value="350" selected>All balls</option>
+
+        </select>
+        <label class="check-row"><input id="soundEnabled" type="checkbox" checked> Sound effects</label>
+        <label class="check-row"><input id="backgroundSoundEnabled" type="checkbox" checked> Background sound</label>
+        <p id="soundStatus" class="hint" role="status" aria-live="polite" hidden></p>
+      </section>
+
+      <section class="card">
+        <h2>Winner history</h2>
+        <ol id="historyList" class="history-list"><li class="empty">No winners yet.</li></ol>
+        <button id="viewWinnerListBtn" class="secondary winner-list-trigger" disabled>View winner list</button>
+      </section>
+    </aside>
+  </main>
+
+  <div id="winnerOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="winnerTitle">
+    <canvas id="confettiCanvas" class="confetti-canvas" aria-hidden="true"></canvas>
+    <div class="winner-card">
+      <div class="winner-label">★ WINNER CAUGHT ★</div>
+      <h2 id="winnerTitle">Member selected</h2>
+      <p id="winnerId" class="winner-id">Member ID</p>
+      <ol id="bulkWinnerList" class="bulk-winner-list" hidden></ol>
+      <p class="congrats">Congratulations!</p>
+      <button id="overlayNext" class="primary">Continue</button>
+    </div>
+  </div>
+
+  <div id="winnerListOverlay" class="overlay winner-list-overlay" role="dialog" aria-modal="true" aria-labelledby="winnerListTitle">
+    <section class="winner-list-card" tabindex="-1">
+      <header class="winner-list-header">
+        <h2 id="winnerListTitle">Winner list</h2>
+        <button id="closeWinnerListBtn" class="secondary" aria-label="Close winner list">Close</button>
+      </header>
+      <div class="winner-table-wrap">
+        <table class="winner-table">
+          <caption class="visually-hidden">All drawn winners, newest first</caption>
+          <thead>
+            <tr>
+              <th scope="col">Draw #</th>
+              <th scope="col">Name</th>
+              <th scope="col">Member ID</th>
+              <th scope="col">Category</th>
+              <th scope="col">Drawn at</th>
+            </tr>
+          </thead>
+          <tbody id="winnerTableBody">
+            <tr><td class="winner-table-empty" colspan="5">No winners yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="winner-list-actions">
+        <button id="winnerListExportBtn" class="secondary">Export winners CSV</button>
+      </div>
+    </section>
+  </div>
+
+  <audio id="drawingAudio" src="bouncing_balls.wav" preload="auto" loop></audio>
+  <audio id="applauseAudio" src="applause.mp3" preload="auto"></audio>
+  <audio id="backgroundAudio" src="background.mp3" preload="auto" loop></audio>
+  <script src="script.js"></script>
+</body>
+</html>
